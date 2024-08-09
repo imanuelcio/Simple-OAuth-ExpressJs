@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  email     String   @unique(map: "email") @db.VarChar(255)
+  password  String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+
+  order order[]
+
+  @@map("users")
+}
+
+model catalogues {
+  catalog_id      Int @id @default(autoincrement())
+  image           String @db.VarChar(255)
+  package_name    String @db.VarChar(255)
+  description     String @db.Text
+  price           Int @db.Int
+
+  order order[]
+
+  @@map("catalogues")
+}
+
+
+  enum StatusOrder {
+    REQUESTED
+    APPROVED
+  }
+
+model order {
+  order_id Int @id @default(autoincrement())
+  catalog_id Int
+  catalogId catalogues @relation(fields: [catalog_id],references: [catalog_id])
+  name String @db.VarChar(100)
+  email String @db.VarChar(100)
+  phone_number String @db.VarChar(30)
+  wedding_date DateTime
+  status_order StatusOrder
+  userid Int
+  user_id User @relation(fields: [userid],references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt()
+
+
+  @@map("tb_order")
+}
+
+model setting {
+  id    Int     @id @default(autoincrement())
+  website_name  String @db.VarChar(100)
+  phone_number1 String @db.VarChar(100)
+  phone_number2 String @db.VarChar(100)
+  email1        String @db.VarChar(100)
+  email2        String @db.VarChar(100)
+  address       String @db.Text
+  maps          String @db.Text
+  logo          String @db.VarChar(100)
+  facebook_url  String @db.VarChar(255)
+  instagram_url  String @db.VarChar(255)
+  youtube_url  String @db.VarChar(255)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt()
+
+@@map("setting")
+}
